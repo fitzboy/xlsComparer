@@ -14,6 +14,7 @@ var newer = flag.String("newer", "", "path to newer file")
 var output = flag.String("output", "", "path to output file")
 
 func main() {
+	log.SetOutput(os.Stdout)
 	flag.Parse()
 	if *older == "" || *newer == "" || *output == "" {
 		log.Fatal("one of the filenames is missing, use -h to see options")
@@ -28,6 +29,9 @@ func main() {
 		for _, row := range sheet.Rows {
 			var sb strings.Builder
 			for _, cell := range row.Cells {
+				if cell.IsTime() {
+					cell.SetFormat("dd mmm yyyy")
+				}
 				sb.WriteString(cell.String())
 			}
 			text := sb.String()
@@ -53,6 +57,9 @@ func main() {
 			wasSeen := false
 			var sb strings.Builder
 			for _, newerCell := range newerRow.Cells {
+				if newerCell.IsTime() {
+					newerCell.SetFormat("dd mmm yyyy")
+				}
 				sb.WriteString(newerCell.String())
 			}
 			text := sb.String()
